@@ -629,22 +629,16 @@
     const key = getKeys()['claude'];
     if (!key) throw new Error('NO_KEY_claude');
     const model = selectedModels['claude'] || 'claude-haiku-4-5';
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const backendUrl = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+    if (!backendUrl) throw new Error('Please connect your Railway backend URL first.');
+    const res = await fetch(backendUrl + '/api/claude', {
       method: 'POST',
-      headers: {
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: model,
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: query }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, model, query })
     });
     if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'Claude error'); }
     const data = await res.json();
-    return { answer: data.content[0].text, citations: [], model: model };
+    return { answer: data.answer, citations: [], model: model };
   }
 
   function appendMessage(html, isUser) {
