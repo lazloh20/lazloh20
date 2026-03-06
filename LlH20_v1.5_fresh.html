@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LazloH" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="theme-color" content="#2a2a35" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LlH20 — Universal API Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0d0d0f; color: #e8e8e8; min-height: 100vh; }
+
+    header {
+      background: linear-gradient(135deg, #0a0a0d, #141418);
+      padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid #c8d8e8;
+    }
+    header h1 { font-size: 1.8rem; color: #a8b8cc; letter-spacing: 1px; text-shadow: 0 0 20px rgba(212,160,23,0.4); }
+    .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .backend-status { font-size: 0.72rem; color: #556; }
+    .backend-status.connected { color: #4caf82; }
+
+    .backend-bar {
+      background: #0d0d12; border-bottom: 1px solid #1a1a20;
+      padding: 8px 40px; display: flex; align-items: center; gap: 10px;
+    }
+    .backend-bar label { font-size: 0.75rem; color: #6a7a8a; white-space: nowrap; }
+    .backend-bar input {
+      flex: 1; background: #0a0a0d; border: 1px solid #1a1a20; border-radius: 6px;
+      color: #ccc; font-size: 0.78rem; padding: 5px 10px; outline: none;
+    }
+    .backend-bar input:focus { border-color: #c8d8e8; }
+    .backend-bar button {
+      background: #141418; border: none; border-radius: 6px; color: #aaa;
+      font-size: 0.75rem; padding: 5px 14px; cursor: pointer; white-space: nowrap;
+    }
+    .backend-bar button:hover { background: #c8d8e8; color: #0d0d0f; }
+
+    .container { display: flex; height: calc(100vh - 190px); }
+
+    .sidebar {
+      width: 300px; background: #0d0d12; border-right: 1px solid #2a2a35;
+      overflow-y: auto; padding: 20px 15px; flex-shrink: 0;
+    }
+    .sidebar h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #a8b8cc; margin-bottom: 15px; padding-left: 5px; opacity: 0.8; }
+
+    .api-card {
+      background: #0a0a0d; border: 1px solid #1a1a20; border-radius: 10px;
+      padding: 14px; margin-bottom: 12px; transition: border-color 0.2s;
+    }
+    .api-card:hover { border-color: #c8d8e8; }
+    .api-card.active { border-color: #4caf82; }
+    .api-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .api-card-header .name { font-size: 0.9rem; font-weight: 600; color: #ccc; }
+    .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; background: #2a2a35; color: #888; }
+    .api-card.active .badge { background: #0d0d0f; color: #4caf82; }
+    .api-card .desc { font-size: 0.75rem; color: #666; margin-bottom: 10px; line-height: 1.4; }
+    .api-card input, .api-card select {
+      width: 100%; background: #0a0a0d; border: 1px solid #1a1a20; border-radius: 6px;
+      color: #ccc; font-size: 0.78rem; padding: 7px 10px; outline: none; margin-bottom: 6px;
+    }
+    .api-card input:focus, .api-card select:focus { border-color: #c8d8e8; }
+    .api-card input::placeholder { color: #444; }
+    .api-card select option { background: #0a0a0d; }
+    .get-key { display: inline-block; font-size: 0.72rem; color: #c8d8e8; text-decoration: none; margin-top: 2px; }
+    .get-key:hover { text-decoration: underline; }
+    .affiliate-badge { font-size: 0.6rem; background: #0f0f14; color: #a8b8cc; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+    .save-btn {
+      width: 100%; margin-top: 6px; padding: 7px; background: #c8d8e8;
+      color: white; border: none; border-radius: 6px; font-size: 0.78rem; cursor: pointer;
+    }
+    .save-btn:hover { background: #a8b8cc; }
+
+    /* Model selector pills */
+    .model-pills { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .model-pill {
+      padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; cursor: pointer;
+      border: 1px solid #1a1a20; background: #0a0a0d; color: #888; transition: all 0.15s;
+    }
+    .model-pill:hover { border-color: #c8d8e8; color: #d0dce8; }
+    .model-pill.selected { background: #141418; border-color: #c8d8e8; color: #eef2f8; }
+    .model-pill .pill-cost { font-size: 0.62rem; color: #666; margin-left: 3px; }
+    .model-pill.selected .pill-cost { color: #c8d8e8; }
+
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .chat-window { flex: 1; overflow-y: auto; padding: 30px 40px; display: flex; flex-direction: column; gap: 18px; }
+
+    .message { display: flex; gap: 12px; max-width: 780px; }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; flex-shrink: 0; }
+    .avatar.bot { background: #c8d8e8; color: #0d0d0f; }
+    .avatar.user { background: #141418; color: #aaa; }
+    .bubble { background: #0a0a0d; border: 1px solid #1a1a20; border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; line-height: 1.6; color: #ddd; }
+    .message.user .bubble { background: #0d0d0f; border-color: #1a1a20; }
+    .source-tag { display: inline-block; font-size: 0.65rem; background: #141418; color: #c8d8e8; padding: 2px 8px; border-radius: 10px; margin-top: 8px; margin-right: 4px; }
+    .citation-link { color: #a8b8cc; font-size: 0.75rem; text-decoration: none; margin-right: 6px; }
+    .citation-link:hover { text-decoration: underline; }
+
+    .typing { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
+    .typing span { width: 8px; height: 8px; background: #c8d8e8; border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+    .input-area { background: #0d0d12; border-top: 1px solid #2a2a35; padding: 12px 40px 20px; background: #0d0d12; }
+
+    /* Active model indicator above input */
+    .active-model-bar {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+      font-size: 0.72rem; color: #666;
+    }
+    .active-model-indicator {
+      background: #141418; border-radius: 20px; padding: 3px 12px;
+      color: #c8d8e8; font-size: 0.72rem;
+    }
+
+    .input-row { display: flex; gap: 12px; align-items: flex-end; }
+    .input-row textarea {
+      flex: 1; background: #0a0a0d;
+      border: 2px solid #a8b8cc;
+      border-radius: 12px;
+      color: #ffffff; font-size: 0.95rem; padding: 14px 18px; resize: none; outline: none;
+      font-family: inherit; line-height: 1.5; min-height: 52px; max-height: 120px;
+      box-shadow: 0 0 16px rgba(212,160,23,0.25), 0 0 4px rgba(212,160,23,0.15);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .input-row textarea:focus {
+      border-color: #a8b8cc;
+      box-shadow: 0 0 24px rgba(212,160,23,0.5), 0 0 8px rgba(212,160,23,0.3);
+    }
+    .input-row textarea::placeholder { color: #888; font-style: italic; }
+    .send-btn { background: #c8d8e8; border: 2px solid #a8b8cc; border-radius: 12px; color: #0d0d0f; padding: 14px 24px; font-size: 1.1rem; cursor: pointer; height: 52px; box-shadow: 0 0 12px rgba(212,160,23,0.4); transition: all 0.2s; font-weight: bold; }
+    .send-btn:hover { background: #a8b8cc; box-shadow: 0 0 20px rgba(212,160,23,0.6); transform: scale(1.04); }
+    .send-btn:disabled { background: #444; cursor: not-allowed; }
+
+    .routing-hint { font-size: 0.72rem; color: #555; margin-bottom: 8px; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0d0d0f; }
+    ::-webkit-scrollbar-thumb { background: #c8d8e8; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ LlH20</h1>
+  <div class="header-right" style="gap:8px; align-items:flex-end;">
+    <span style="font-size:0.85rem;color:#888;">Universal API Dashboard · v1.5</span>
+    <span class="backend-status" id="backendStatus">⚪ Backend not connected</span>
+    <button onclick="clearAllKeys()" style="background:#0f0f14; border:1px solid #c8d8e8; border-radius:6px; color:#a8b8cc; font-size:0.7rem; padding:4px 10px; cursor:pointer;">🗑️ Clear All Keys</button>
+    <button onclick="clearHistory()" style="background:#0f0f14; border:1px solid #556; border-radius:6px; color:#a8b8cc; font-size:0.7rem; padding:4px 10px; cursor:pointer;" title="Clear saved chat history from this device">🗂️ Clear History</button>
+  </div>
+</header>
+
+<div class="backend-bar">
+  <label>🖥️ Backend URL:</label>
+  <input type="text" id="backendUrl" placeholder="https://your-app.up.railway.app  (leave blank for direct mode)" />
+  <button onclick="testBackend()">Test Connection</button>
+</div>
+
+<div class="input-area">
+      <div class="active-model-bar" style="margin-bottom:8px;">
+        <span>Active model:</span>
+        <span class="active-model-indicator" id="activeModelLabel">None — add a key to get started</span>
+        <span class="routing-hint" id="routingHint"></span>
+      </div>
+      <div class="input-row">
+        <textarea id="queryInput" placeholder="💬  Ask anything — weather, writing, code, scheduling..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendQuery();}"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendQuery()">➤</button>
+      </div>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>🤖 AI Model</h2>
+
+    <!-- Perplexity -->
+    <div class="api-card" id="card-perplexity">
+      <div class="api-card-header">
+        <span class="name">Perplexity</span>
+        <span class="badge" id="badge-perplexity">Not Set</span>
+      </div>
+      <div class="desc">🌐 Real-time web search + AI answers with citations.</div>
+      <div class="model-pills">
+        <div class="model-pill selected" onclick="selectModel('perplexity','sonar',this)" title="Fast, real-time search">
+          Sonar <span class="pill-cost">Free tier</span>
+        </div>
+        <div class="model-pill" onclick="selectModel('perplexity','sonar-pro',this)" title="Deeper search with more sources">
+          Sonar Pro <span class="pill-cost">~$0.003/q</span>
+        </div>
+      </div>
+      <input type="password" id="key-perplexity" placeholder="pplx-••••••••••••••••" />
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Get Perplexity (Free or Pro)</div>
+        <a class="get-key" href="https://perplexity.ai" target="_blank" style="color:#4caf7d; font-weight:600;">
+          🆓 Start free at perplexity.ai — no credit card needed
+        </a>
+        <div style="font-size:0.65rem; color:#c8d8e8; margin-top:4px;">⭐ Upgrade to Pro for advanced models &amp; higher limits</div>
+      </div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Generate your API Key</div>
+        <a class="get-key" href="https://www.perplexity.ai/settings/api" target="_blank">
+          🔗 perplexity.ai/settings → API tab
+        </a>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Free to create — billed per query separately</div>
+      </div>
+      <button class="save-btn" onclick="saveKey('perplexity')">Save & Activate</button>
+    </div>
+
+    <!-- Claude (Anthropic) -->
+    <div class="api-card" id="card-claude">
+      <div class="api-card-header">
+        <span class="name">Claude (Anthropic)</span>
+        <span class="badge" id="badge-claude">Not Set</span>
+      </div>
+      <div class="desc">Best for writing, coding, analysis, and long-context reasoning. Choose your tier:</div>
+      <div class="model-pills">
+        <div class="model-pill" onclick="selectModel('claude','claude-haiku-4-5',this)" title="Fastest & cheapest — great for simple tasks">
+          Haiku <span class="pill-cost">~$0.0008/q</span>
+        </div>
+        <div class="model-pill" onclick="selectModel('claude','claude-sonnet-4-5',this)" title="Balanced speed & intelligence — recommended">
+          Sonnet <span class="pill-cost">~$0.003/q</span>
+        </div>
+        <div class="model-pill" onclick="selectModel('claude','claude-opus-4-5',this)" title="Most powerful — complex reasoning & coding">
+          Opus <span class="pill-cost">~$0.015/q</span>
+        </div>
+      </div>
+      <input type="password" id="key-claude" placeholder="sk-ant-••••••••••••••••" />
+      <a class="get-key" href="https://console.anthropic.com/settings/keys" target="_blank">🔗 Get Claude API key</a>
+      <button class="save-btn" onclick="saveKey('claude')">Save & Activate</button>
+    </div>
+
+    <h2 style="margin-top:4px;">⚡ Action API's</h2>
+
+    <div class="api-card" id="card-instagram">
+      <div class="api-card-header"><span class="name">Instagram Graph</span><span class="badge" id="badge-instagram">Not Set</span></div>
+      <div class="desc">Publish posts, stories, reels. Pull page analytics.</div>
+      <input type="password" id="key-instagram" placeholder="EAABs••••••••••••••" />
+      <a class="get-key" href="https://developers.facebook.com/docs/instagram-api" target="_blank">🔗 Get Instagram API key</a>
+      <button class="save-btn" onclick="saveKey('instagram')">Save Key</button>
+    </div>
+
+    <div class="api-card" id="card-buffer">
+      <div class="api-card-header"><span class="name">Buffer</span><span class="badge" id="badge-buffer">Not Set</span></div>
+      <div class="desc">Schedule and publish content across social platforms.</div>
+      <input type="password" id="key-buffer" placeholder="1/••••••••••••••••••" />
+      <a class="get-key" href="https://buffer.com/developers/api" target="_blank">🔗 Get Buffer API key</a>
+      <button class="save-btn" onclick="saveKey('buffer')">Save Key</button>
+    </div>
+
+    <div class="api-card" id="card-zapier">
+      <div class="api-card-header"><span class="name">Zapier</span><span class="badge" id="badge-zapier">Not Set</span></div>
+      <div class="desc">Trigger 6,000+ app integrations from one command.</div>
+      <input type="password" id="key-zapier" placeholder="zap-••••••••••••••••" />
+      <a class="get-key" href="https://zapier.com/app/developer" target="_blank">🔗 Get Zapier API key</a>
+      <button class="save-btn" onclick="saveKey('zapier')">Save Key</button>
+    </div>
+
+    <div class="api-card" id="card-gdrive">
+      <div class="api-card-header"><span class="name">Google Drive</span><span class="badge" id="badge-gdrive">Not Set</span></div>
+      <div class="desc">Create, upload, and organize files automatically.</div>
+      <input type="password" id="key-gdrive" placeholder="ya29.••••••••••••••" />
+      <a class="get-key" href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank">🔗 Get Google Drive API key</a>
+      <button class="save-btn" onclick="saveKey('gdrive')">Save Key</button>
+    </div>
+
+    <div class="api-card" id="card-stripe">
+      <div class="api-card-header"><span class="name">Stripe</span><span class="badge" id="badge-stripe">Not Set</span></div>
+      <div class="desc">Process payments, invoices, and subscriptions.</div>
+      <input type="password" id="key-stripe" placeholder="sk_live_••••••••••••" />
+      <a class="get-key" href="https://dashboard.stripe.com/apikeys" target="_blank">🔗 Get Stripe API key</a>
+      <button class="save-btn" onclick="saveKey('stripe')">Save Key</button>
+    </div>
+
+    <h2 style="margin-top:20px;">⚙️ Custom API's</h2>
+    <div class="api-card" id="card-custom1">
+      <div class="api-card-header">
+        <span class="name">Shopify <span class="affiliate-badge">★ Affiliate</span></span>
+        <span class="badge" id="badge-custom1">Not Set</span>
+      </div>
+
+    <!-- Telegram -->
+    <div class="api-card" id="card-telegram">
+      <div class="api-card-header">
+        <span class="name">Telegram Bot</span>
+        <span class="badge" id="badge-telegram">Not Set</span>
+      </div>
+      <div class="desc">📨 Send messages, post to channels, automate bot replies. 100% free.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+        <a class="get-key" href="https://t.me/BotFather" target="_blank">🔗 t.me/BotFather → /newbot</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free forever — no credit card needed</div>
+      </div>
+      <input type="password" id="key-telegram" placeholder="1234567890:ABC-••••••••" />
+      <button class="save-btn" onclick="saveKey('telegram')">Save Key</button>
+    </div>
+
+    <!-- Discord -->
+    <div class="api-card" id="card-discord">
+      <div class="api-card-header">
+        <span class="name">Discord</span>
+        <span class="badge" id="badge-discord">Not Set</span>
+      </div>
+      <div class="desc">🎮 Post to channels, manage webhooks, trigger bot actions. Free.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+        <a class="get-key" href="https://discord.com/developers/applications" target="_blank">🔗 discord.com/developers/applications</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Create app → Bot → Reset Token. Free.</div>
+      </div>
+      <input type="password" id="key-discord" placeholder="Bot token..." />
+      <button class="save-btn" onclick="saveKey('discord')">Save Key</button>
+    </div>
+
+    <!-- Slack -->
+    <div class="api-card" id="card-slack">
+      <div class="api-card-header">
+        <span class="name">Slack</span>
+        <span class="badge" id="badge-slack">Not Set</span>
+      </div>
+      <div class="desc">💼 Send messages to channels, post alerts, automate team updates. Free tier available.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+        <a class="get-key" href="https://api.slack.com/apps" target="_blank">🔗 api.slack.com/apps → Create App → OAuth</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free for basic messaging — no card needed</div>
+      </div>
+      <input type="password" id="key-slack" placeholder="xoxb-••••••••••" />
+      <button class="save-btn" onclick="saveKey('slack')">Save Key</button>
+    </div>
+
+    <!-- WhatsApp Business -->
+    <div class="api-card" id="card-whatsapp">
+      <div class="api-card-header">
+        <span class="name">WhatsApp Business</span>
+        <span class="badge" id="badge-whatsapp">Not Set</span>
+      </div>
+      <div class="desc">📱 Send messages, automate replies, push notifications. 1,000 free msgs/month.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Token</div>
+        <a class="get-key" href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">🔗 developers.facebook.com → WhatsApp Cloud API</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">1,000 free conversations/month via Meta</div>
+      </div>
+      <input type="password" id="key-whatsapp" placeholder="Access token..." />
+      <button class="save-btn" onclick="saveKey('whatsapp')">Save Key</button>
+    </div>
+
+    <!-- Facebook Messenger -->
+    <div class="api-card" id="card-messenger">
+      <div class="api-card-header">
+        <span class="name">Facebook Messenger</span>
+        <span class="badge" id="badge-messenger">Not Set</span>
+      </div>
+      <div class="desc">💬 Automate replies, send broadcasts, manage page messaging. Free.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Page Token</div>
+        <a class="get-key" href="https://developers.facebook.com/docs/messenger-platform" target="_blank">🔗 developers.facebook.com → Messenger Platform</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free — requires Facebook Page & Meta app</div>
+      </div>
+      <input type="password" id="key-messenger" placeholder="Page access token..." />
+      <button class="save-btn" onclick="saveKey('messenger')">Save Key</button>
+    </div>
+
+    <!-- Twilio SMS -->
+    <div class="api-card" id="card-twilio">
+      <div class="api-card-header">
+        <span class="name">Twilio SMS</span>
+        <span class="badge" id="badge-twilio">Not Set</span>
+      </div>
+      <div class="desc">📲 Send SMS to any number worldwide. $15 free trial credit included.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Key</div>
+        <a class="get-key" href="https://www.twilio.com/try-twilio" target="_blank">🔗 twilio.com/try-twilio → Free trial ($15 credit)</a>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">~$0.0079/SMS after trial — no monthly fee</div>
+      </div>
+      <input type="password" id="key-twilio" placeholder="Account SID:Auth Token" />
+      <button class="save-btn" onclick="saveKey('twilio')">Save Key</button>
+    </div>
+
+
+      <div class="desc">Build and manage online stores. E-commerce actions, product management, order tracking.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Shopify Affiliate Program</div>
+        <a class="get-key" href="https://www.shopify.com/affiliates" target="_blank" style="color:#ffffff; font-weight:600;" id="aff-shopify">
+          ★ Apply to Shopify Affiliates ($150/referral)
+        </a>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Earn $150 per full-price plan referral via Impact.com</div>
+      </div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Shopify API Key</div>
+        <a class="get-key" href="https://shopify.dev/docs/api" target="_blank">🔗 shopify.dev/docs/api</a>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Create a Partner account to access API credentials</div>
+      </div>
+      <input type="text" id="label-custom1" placeholder="Shopify" style="display:none;" value="Shopify" />
+      <input type="text" id="endpoint-custom1" placeholder="Endpoint URL" style="display:none;" value="https://shopify.dev/docs/api" />
+      <input type="password" id="key-custom1" placeholder="shpat_••••••••••••••••" />
+      <button class="save-btn" onclick="saveKey('custom1')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom2">
+      <div class="api-card-header">
+        <span class="name">Notion <span class="affiliate-badge">★ Affiliate</span></span>
+        <span class="badge" id="badge-custom2">Not Set</span>
+      </div>
+      <div class="desc">Create pages, update databases, manage your workspace automatically.</div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Notion Affiliate Program</div>
+        <a class="get-key" href="https://www.notion.com/affiliates" target="_blank" style="color:#ffffff; font-weight:600;" id="aff-notion">
+          ★ Apply to Notion Affiliates (50% for 12 months)
+        </a>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">50% recurring commission for 12 months per referral via PartnerStack</div>
+      </div>
+      <div style="margin-top:6px; padding:8px; background:#0a0a0d; border-radius:6px; border:1px solid #1a1a20;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Notion API Key</div>
+        <a class="get-key" href="https://www.notion.so/my-integrations" target="_blank">🔗 notion.so/my-integrations</a>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Free to create — requires a Notion account</div>
+      </div>
+      <input type="text" id="label-custom2" placeholder="Notion" style="display:none;" value="Notion" />
+      <input type="text" id="endpoint-custom2" placeholder="Endpoint URL" style="display:none;" value="https://api.notion.com/v1" />
+      <input type="password" id="key-custom2" placeholder="secret_••••••••••••••••" />
+      <button class="save-btn" onclick="saveKey('custom2')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom3">
+      <div class="api-card-header"><span class="name">Custom API #3</span><span class="badge" id="badge-custom3">Not Set</span></div>
+      <input type="text" id="label-custom3" placeholder="API Name (e.g. YouTube Data)" />
+      <input type="text" id="endpoint-custom3" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom3" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom3')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom4">
+      <div class="api-card-header"><span class="name">Custom API #4</span><span class="badge" id="badge-custom4">Not Set</span></div>
+      <input type="text" id="label-custom4" placeholder="API Name (e.g. Twitter/X)" />
+      <input type="text" id="endpoint-custom4" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom4" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom4')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom5">
+      <div class="api-card-header"><span class="name">Custom API #5</span><span class="badge" id="badge-custom5">Not Set</span></div>
+      <input type="text" id="label-custom5" placeholder="API Name (e.g. Reddit)" />
+      <input type="text" id="endpoint-custom5" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom5" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom5')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom6">
+      <div class="api-card-header"><span class="name">Custom API #6</span><span class="badge" id="badge-custom6">Not Set</span></div>
+      <input type="text" id="label-custom6" placeholder="API Name (e.g. Twilio SMS)" />
+      <input type="text" id="endpoint-custom6" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom6" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom6')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom7">
+      <div class="api-card-header"><span class="name">Custom API #7</span><span class="badge" id="badge-custom7">Not Set</span></div>
+      <input type="text" id="label-custom7" placeholder="API Name (e.g. Shopify)" />
+      <input type="text" id="endpoint-custom7" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom7" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom7')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom8">
+      <div class="api-card-header"><span class="name">Custom API #8</span><span class="badge" id="badge-custom8">Not Set</span></div>
+      <input type="text" id="label-custom8" placeholder="API Name (e.g. Notion)" />
+      <input type="text" id="endpoint-custom8" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom8" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom8')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom9">
+      <div class="api-card-header"><span class="name">Custom API #9</span><span class="badge" id="badge-custom9">Not Set</span></div>
+      <input type="text" id="label-custom9" placeholder="API Name (e.g. Airtable)" />
+      <input type="text" id="endpoint-custom9" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom9" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom9')">Save Key</button>
+    </div>
+    <div class="api-card" id="card-custom10">
+      <div class="api-card-header"><span class="name">Custom API #10</span><span class="badge" id="badge-custom10">Not Set</span></div>
+      <input type="text" id="label-custom10" placeholder="API Name (e.g. SendGrid)" />
+      <input type="text" id="endpoint-custom10" placeholder="Endpoint URL" />
+      <input type="password" id="key-custom10" placeholder="Your API key" />
+      <button class="save-btn" onclick="saveKey('custom10')">Save Key</button>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT -->
+  <div class="main">
+    <div class="chat-window" id="chatWindow">
+      <div class="message">
+        <div class="avatar bot">Q</div>
+        <div class="bubble">
+          👋 Welcome to <strong>LlH20 v1.5</strong> — your universal BYOK API dashboard.<br><br>
+
+          <strong>🆓 Free to connect right now:</strong><br>
+          💬 <strong>Telegram Bot</strong> — free forever, no credit card<br>
+          🎮 <strong>Discord</strong> — free webhook & bot<br>
+          💼 <strong>Slack</strong> — free basic messaging<br>
+          📱 <strong>WhatsApp Business</strong> — 1,000 free msgs/month<br>
+          ☁️ <strong>Google Drive</strong> — free with any Google account<br><br>
+
+          <strong>🤖 AI Models (pay-per-query, no subscription):</strong><br>
+          🌐 <strong>Perplexity Sonar</strong> — ~$0.005/query, no monthly fee · <a class="get-key" href="https://www.perplexity.ai/settings/api" target="_blank">Get free API key →</a><br>
+          🧠 <strong>Claude Haiku</strong> — ~$0.0008/query, fastest &amp; cheapest<br>
+          ⚡ <strong>Claude Sonnet</strong> — ~$0.003/query, recommended<br>
+          🚀 <strong>Claude Opus</strong> — ~$0.015/query, most powerful<br><br>
+
+          Add a key in the sidebar to activate any model. The active model shows above the input bar. Switch anytime! 🔀
+        </div>
+      </div>
+    </div>
+
+        </div>
+  </div>
+</div>
+
+<script>
+  // Keys stored in sessionStorage — cleared automatically when tab/browser closes
+  const getKeys = () => JSON.parse(sessionStorage.getItem('lazloh_keys') || '{}');
+  const setKeys = (k) => sessionStorage.setItem('lazloh_keys', JSON.stringify(k));
+  if (!sessionStorage.getItem('lazloh_keys')) setKeys({});
+  let backendConnected = false;
+
+  // Model selection state: { provider, modelId }
+  const selectedModels = {
+    perplexity: 'sonar',
+    claude: 'claude-haiku-4-5'
+  };
+  let activeProvider = null; // which provider to use for chat
+
+  const modelLabels = {
+    'sonar': 'Perplexity Sonar',
+    'sonar-pro': 'Perplexity Sonar Pro',
+    'claude-haiku-4-5': 'Claude Haiku',
+    'claude-sonnet-4-5': 'Claude Sonnet',
+    'claude-opus-4-5': 'Claude Opus'
+  };
+
+  function selectModel(provider, modelId, el) {
+    // Update pill UI for this provider's group
+    const card = document.getElementById('card-' + provider);
+    card.querySelectorAll('.model-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedModels[provider] = modelId;
+    // If this provider has a key, make it active
+    if (getKeys()[provider]) {
+      activeProvider = provider;
+      updateActiveModelLabel();
+    }
+  }
+
+  function saveKey(name) {
+    const input = document.getElementById('key-' + name);
+    const card = document.getElementById('card-' + name);
+    const badge = document.getElementById('badge-' + name);
+    if (input && input.value.trim()) {
+      const keys = getKeys();
+      keys[name] = input.value.trim();
+      setKeys(keys);
+      badge.textContent = 'Active';
+      card.classList.add('active');
+      input.value = '•'.repeat(16);
+      if (!activeProvider || name === 'perplexity' || name === 'claude') {
+        activeProvider = name;
+      }
+      updateActiveModelLabel();
+    }
+  }
+
+  function clearAllKeys() {
+    if (!confirm('Clear all saved API keys? This cannot be undone.')) return;
+    sessionStorage.removeItem('lazloh_keys');
+    // Reset all badge UI
+    document.querySelectorAll('.badge').forEach(b => {
+      if (b.textContent === 'Active') b.textContent = 'Not Set';
+    });
+    document.querySelectorAll('.api-card').forEach(c => c.classList.remove('active'));
+    // Keep weather card active (no key needed)
+    const weatherCard = document.getElementById('card-weather');
+    if (weatherCard) weatherCard.classList.add('active');
+    activeProvider = null;
+    updateActiveModelLabel();
+    appendMessage('🗑️ All API keys cleared. Your keys were only stored in this browser session and are now gone.', false);
+  }
+
+  // ── localStorage history ───────────────────────────────────────────────────
+  const HISTORY_KEY = 'llh20_chat_history';
+
+  function saveHistory() {
+    try {
+      const bubbles = [...document.querySelectorAll('#chatWindow .message')].map(msg => ({
+        isUser: msg.classList.contains('user'),
+        html: msg.querySelector('.bubble').innerHTML
+      }));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(bubbles));
+    } catch(e) { console.warn('History save failed:', e); }
+  }
+
+  function loadHistory() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      if (saved.length === 0) return;
+      // Clear default welcome, load saved messages
+      const cw = document.getElementById('chatWindow');
+      cw.innerHTML = '';
+      saved.forEach(({ isUser, html: bhtml }) => appendMessage(bhtml, isUser, true));
+      appendMessage('📂 <em>Chat history restored from your last session.</em><br><span style="font-size:0.72rem;color:#888;">⚠️ On a public or shared device? Click <strong>🗂️ Clear History</strong> in the top right.</span>', false, true);
+    } catch(e) { console.warn('History load failed:', e); }
+  }
+
+  function clearHistory() {
+    if (!confirm('Clear saved chat history from this device?')) return;
+    localStorage.removeItem(HISTORY_KEY);
+    const cw = document.getElementById('chatWindow');
+    cw.innerHTML = '';
+    appendMessage('🗂️ Chat history cleared from this device.<br><span style="font-size:0.72rem;color:#888;">Your conversation is gone and will not be restored on next visit.</span>', false, true);
+  }
+
+  function updateActiveModelLabel() {
+    const label = document.getElementById('activeModelLabel');
+    const textarea = document.getElementById('queryInput');
+    if (!activeProvider || !getKeys()[activeProvider]) {
+      label.textContent = 'None — add a key to get started';
+      if (textarea) textarea.placeholder = 'Add an API key in the sidebar to get started...';
+      return;
+    }
+    const modelId = selectedModels[activeProvider] || '';
+    const modelName = (modelLabels[modelId] || modelId);
+    label.textContent = modelName + ' ✓';
+    if (textarea) textarea.placeholder = 'Ask anything — ' + modelName + ' is ready ✓';
+  }
+
+  async function testBackend() {
+    const url = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+    if (!url) { alert('Enter your Railway backend URL first.'); return; }
+    try {
+      const res = await fetch(url + '/');
+      const data = await res.json();
+      if (data.status) {
+        backendConnected = true;
+        document.getElementById('backendStatus').textContent = '🟢 Connected: ' + url;
+        document.getElementById('backendStatus').className = 'backend-status connected';
+        if (window._onBackendConnected) window._onBackendConnected(url);
+      }
+    } catch(e) {
+      document.getElementById('backendStatus').textContent = '🔴 Connection failed — check your URL';
+      document.getElementById('backendStatus').className = 'backend-status';
+    }
+  }
+
+  function detectRoute(q) {
+    q = q.toLowerCase();
+    if (q.includes('schedule')||q.includes('buffer')||q.includes('publish post')) return 'buffer';
+    if (q.includes('instagram')||q.includes('story')||q.includes('reel')) return 'instagram';
+    if (q.includes('drive')||q.includes('upload')||q.includes('folder')) return 'gdrive';
+    if (q.includes('zap')||q.includes('automat')||q.includes('trigger')) return 'zapier';
+    if (q.includes('payment')||q.includes('invoice')||q.includes('stripe')) return 'stripe';
+    return 'ai'; // AI query — use active provider
+  }
+
+  async function callPerplexity(query) {
+    const key = getKeys()['perplexity'];
+    if (!key) throw new Error('NO_KEY_perplexity');
+    const res = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: selectedModels['perplexity'] || 'sonar',
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant. Answer concisely with cited sources.' },
+          { role: 'user', content: query }
+        ]
+      })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'Perplexity error'); }
+    const data = await res.json();
+    return { answer: data.choices[0].message.content, citations: data.citations || [], model: selectedModels['perplexity'] };
+  }
+
+  async function callClaude(query) {
+    const key = getKeys()['claude'];
+    if (!key) throw new Error('NO_KEY_claude');
+    const model = selectedModels['claude'] || 'claude-haiku-4-5';
+    const backendUrl = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+    if (!backendUrl) throw new Error('Paste your Railway URL in the Backend URL bar above to use Claude.');
+    const res = await fetch(`${backendUrl}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, model, query })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return { answer: data.answer, citations: [], model: data.model };
+  }
+
+  function appendMessage(html, isUser, skipSave = false) {
+    const cw = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = 'message' + (isUser ? ' user' : '');
+    div.innerHTML = '<div class="avatar '+(isUser?'user':'bot')+'">'+(isUser?'M':'Q')+'</div><div class="bubble">'+html+'</div>';
+    cw.appendChild(div);
+    cw.scrollTop = cw.scrollHeight;
+    if (!skipSave) saveHistory();
+  }
+
+  function showTyping() {
+    const cw = document.getElementById('chatWindow');
+    const div = document.createElement('div');
+    div.className = 'message'; div.id = 'typingIndicator';
+    div.innerHTML = '<div class="avatar bot">Q</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+    cw.appendChild(div); cw.scrollTop = cw.scrollHeight;
+  }
+
+  function removeTyping() { const el = document.getElementById('typingIndicator'); if(el) el.remove(); }
+
+  function escapeHtml(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function sendQuery() {
+    const input = document.getElementById('queryInput');
+    const query = input.value.trim();
+    if (!query) return;
+    if (isRateLimited()) {
+      appendMessage('⚠️ Rate limit reached — max 20 requests per minute. Please wait a moment.', false);
+      return;
+    }
+    document.getElementById('sendBtn').disabled = true;
+    appendMessage(escapeHtml(query), true);
+    input.value = '';
+    showTyping();
+
+    const route = detectRoute(query);
+
+    try {
+      if (route === 'ai') {
+        // Use active AI provider
+        if (!activeProvider || !getKeys()[activeProvider]) {
+          removeTyping();
+          appendMessage('⚠️ No AI model active. Add a Perplexity or Claude API key in the sidebar.<br><a class="get-key" href="https://partners.dub.co/perplexity" target="_blank">🔗 Get Perplexity key (affiliate)</a>', false);
+          document.getElementById('sendBtn').disabled = false;
+          return;
+        }
+
+        let result;
+        if (activeProvider === 'perplexity') result = await callPerplexity(query);
+        else if (activeProvider === 'claude') result = await callClaude(query);
+
+        removeTyping();
+        let html = escapeHtml(result.answer).replace(/\n/g,'<br>');
+        if (result.citations && result.citations.length > 0) {
+          html += '<br><br>';
+          result.citations.forEach((url, i) => {
+            html += '<a class="citation-link" href="'+url+'" target="_blank">[' + (i+1) + '] ' + escapeHtml(url.replace('https://','').split('/')[0]) + '</a>';
+          });
+        }
+        html += '<br><span class="source-tag">✅ ' + (modelLabels[result.model] || result.model) + '</span>';
+        appendMessage(html, false);
+
+      } else {
+        removeTyping();
+        // ── Messaging/action routing via Railway proxy ──────────────────────
+        const _backendUrl = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+        const _msgRoutes = ['telegram','slack','discord','whatsapp','twilio','buffer','instagram','messenger'];
+        if (_msgRoutes.includes(route)) {
+          const key = getKeys()[route];
+          if (!key) {
+            appendMessage(`No key for <strong>${route}</strong>. Add it in the sidebar.`, false);
+            document.getElementById('sendBtn').disabled = false;
+            return;
+          }
+          if (!_backendUrl) {
+            appendMessage(`Add your Railway backend URL above to execute <strong>${route}</strong> actions.`, false);
+            document.getElementById('sendBtn').disabled = false;
+            return;
+          }
+          try {
+            const payload = { key, text: query, content: query, message: query };
+            if (route === 'telegram')  payload.chat_id = prompt('Telegram chat_id (get from @userinfobot):');
+            if (route === 'slack')     payload.channel = prompt('Slack channel? (e.g. #general)');
+            if (route === 'discord')   { payload.webhook_url = key; delete payload.key; }
+            if (route === 'whatsapp')  { payload.phone_number_id = prompt('WhatsApp phone_number_id:'); payload.to = prompt('Recipient number (e.g. +1234567890):'); }
+            if (route === 'twilio')    { const parts = key.split(':'); payload.account_sid = parts[0]; payload.auth_token = parts[1]; payload.from = prompt('From number:'); payload.to = prompt('To number:'); payload.body = query; delete payload.key; }
+            const r = await fetch(`${_backendUrl}/api/${route}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const d = await r.json();
+            appendMessage(`✅ <strong>${route}</strong> action sent successfully.<br><span class="source-tag">${route}</span>`, false);
+          } catch(e) {
+            appendMessage(`❌ ${route} error: ${escapeHtml(e.message)}`, false);
+          }
+          document.getElementById('sendBtn').disabled = false;
+          return;
+        }
+        const hasKey = getKeys()[route];
+        const labels = { buffer:'Buffer', instagram:'Instagram Graph', gdrive:'Google Drive', zapier:'Zapier', stripe:'Stripe' };
+        const msg = hasKey
+          ? '⚡ Routing to <strong>'+(labels[route]||route)+'</strong>...<br>[Backend required for action execution.]<br><span class="source-tag">Routed: '+route+'</span>'
+          : '⚠️ No key for <strong>'+(labels[route]||route)+'</strong>. Add it in the sidebar.<br><span class="source-tag">Key Missing: '+route+'</span>';
+        appendMessage(msg, false);
+      }
+    } catch(err) {
+      removeTyping();
+      appendMessage('❌ Error: ' + escapeHtml(err.message), false);
+    }
+    document.getElementById('sendBtn').disabled = false;
+  }
+</script>
+
+  <script>
+    // Affiliate link obfuscation: once backend connected, route through /r/ redirect endpoint
+    // This hides your actual affiliate URLs from HTML inspection
+    function obfuscateAffiliateLinks(backendUrl) {
+      const links = {
+        'aff-shopify':    backendUrl + '/r/shopify',
+        'aff-notion':     backendUrl + '/r/notion'
+      };
+      Object.entries(links).forEach(([id, url]) => {
+        const el = document.getElementById(id);
+        if (el) el.href = url;
+      });
+    }
+    // Called after successful backend connection test
+    window._onBackendConnected = obfuscateAffiliateLinks;
+  </script>
+
+  <script>
+    // Load chat history on startup
+  window.addEventListener('load', () => {
+    loadHistory();
+    // Public device reminder — shown once per session
+    if (!sessionStorage.getItem('llh20_reminder_shown')) {
+      sessionStorage.setItem('llh20_reminder_shown', '1');
+      setTimeout(() => {
+        appendMessage('💡 <strong>Using a public or shared device?</strong> Remember to click <strong>🗂️ Clear History</strong> and <strong>🗑️ Clear All Keys</strong> before leaving.', false, true);
+      }, 1200);
+    }
+  });
+
+  if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('LazloH SW registered:', reg.scope))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
