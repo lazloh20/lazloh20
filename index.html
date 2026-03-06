@@ -7,81 +7,81 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="LazloH" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <meta name="theme-color" content="#1e2d40" />
+  <meta name="theme-color" content="#2a2a35" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LazloH — Universal API Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0a0e1a; color: #e8e8e8; min-height: 100vh; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a2332; min-height: 100vh; }
 
     header {
-      background: linear-gradient(135deg, #0d1117, #111827);
+      background: linear-gradient(135deg, #e8ecf2, #dce4ed);
       padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 2px solid #c8d8e8;
+      border-bottom: 2px solid #b0c4d8;
     }
-    header h1 { font-size: 1.8rem; color: #a8b8cc; letter-spacing: 1px; text-shadow: 0 0 20px rgba(212,160,23,0.4); }
+    header h1 { font-size: 1.8rem; color: #1a3a5c; letter-spacing: 1px; text-shadow: none; }
     .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
     .backend-status { font-size: 0.72rem; color: #556; }
     .backend-status.connected { color: #4caf82; }
 
     .backend-bar {
-      background: #0a0e1a; border-bottom: 1px solid #1e2d40;
+      background: #eef1f6; border-bottom: 1px solid #1a1a20;
       padding: 8px 40px; display: flex; align-items: center; gap: 10px;
     }
-    .backend-bar label { font-size: 0.75rem; color: #5bc8c8; white-space: nowrap; }
+    .backend-bar label { font-size: 0.75rem; color: #2a5a7a; white-space: nowrap; }
     .backend-bar input {
-      flex: 1; background: #0d1117; border: 1px solid #1e2d40; border-radius: 6px;
-      color: #ccc; font-size: 0.78rem; padding: 5px 10px; outline: none;
+      flex: 1; background: #ffffff; border: 1px solid #c8d4e0; border-radius: 6px;
+      color: #2a3a4a; font-size: 0.78rem; padding: 5px 10px; outline: none;
     }
-    .backend-bar input:focus { border-color: #c8d8e8; }
+    .backend-bar input:focus { border-color: #0a7a7a; }
     .backend-bar button {
-      background: #111827; border: none; border-radius: 6px; color: #aaa;
+      background: #e8ecf2; border: none; border-radius: 6px; color: #4a5a6a;
       font-size: 0.75rem; padding: 5px 14px; cursor: pointer; white-space: nowrap;
     }
-    .backend-bar button:hover { background: #c8d8e8; color: #0a0e1a; }
+    .backend-bar button:hover { background: #0a7a7a; color: #0d0d0f; }
 
     .container { display: flex; height: calc(100vh - 190px); }
 
     .sidebar {
-      width: 300px; background: #0a0e1a; border-right: 1px solid #1e2d40;
+      width: 300px; background: #eef1f6; border-right: 1px solid #c8d4e0;
       overflow-y: auto; padding: 20px 15px; flex-shrink: 0;
     }
-    .sidebar h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #a8b8cc; margin-bottom: 15px; padding-left: 5px; opacity: 0.8; }
+    .sidebar h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #1a3a5c; margin-bottom: 15px; padding-left: 5px; opacity: 0.8; }
 
     .api-card {
-      background: #0d1117; border: 1px solid #1e2d40; border-radius: 10px;
+      background: #ffffff; border: 1px solid #c8d4e0; border-radius: 10px;
       padding: 14px; margin-bottom: 12px; transition: border-color 0.2s;
     }
-    .api-card:hover { border-color: #c8d8e8; }
+    .api-card:hover { border-color: #0a7a7a; }
     .api-card.active { border-color: #4caf82; }
     .api-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .api-card-header .name { font-size: 0.9rem; font-weight: 600; color: #ccc; }
-    .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; background: #1e2d40; color: #888; }
-    .api-card.active .badge { background: #0a0e1a; color: #4caf82; }
-    .api-card .desc { font-size: 0.75rem; color: #3a9090; margin-bottom: 10px; line-height: 1.4; }
+    .api-card-header .name { font-size: 0.9rem; font-weight: 600; color: #2a3a4a; }
+    .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; background: #c8d4e0; color: #6a7a8a; }
+    .api-card.active .badge { background: #f5f7fa; color: #4caf82; }
+    .api-card .desc { font-size: 0.75rem; color: #4a6a7a; margin-bottom: 10px; line-height: 1.4; }
     .api-card input, .api-card select {
-      width: 100%; background: #0d1117; border: 1px solid #1e2d40; border-radius: 6px;
-      color: #ccc; font-size: 0.78rem; padding: 7px 10px; outline: none; margin-bottom: 6px;
+      width: 100%; background: #ffffff; border: 1px solid #c8d4e0; border-radius: 6px;
+      color: #2a3a4a; font-size: 0.78rem; padding: 7px 10px; outline: none; margin-bottom: 6px;
     }
-    .api-card input:focus, .api-card select:focus { border-color: #c8d8e8; }
-    .api-card input::placeholder { color: #2a7a7a; }
-    .api-card select option { background: #0d1117; }
-    .get-key { display: inline-block; font-size: 0.72rem; color: #c8d8e8; text-decoration: none; margin-top: 2px; }
+    .api-card input:focus, .api-card select:focus { border-color: #0a7a7a; }
+    .api-card input::placeholder { color: #aaa; }
+    .api-card select option { background: #ffffff; }
+    .get-key { display: inline-block; font-size: 0.72rem; color: #0a7a7a; text-decoration: none; margin-top: 2px; }
     .get-key:hover { text-decoration: underline; }
-    .affiliate-badge { font-size: 0.6rem; background: #0f1520; color: #a8b8cc; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-    .save-btn { width: 100%; margin-top: 6px; padding: 7px; background: #0d2a2a; color: #5bc8c8; border: 1px solid #5bc8c8; border-radius: 6px; font-size: 0.78rem; cursor: pointer; font-weight: 600; }
-    .save-btn:hover { background: #1a3a3a; border-color: #7adada; color: #7adada; }
+    .affiliate-badge { font-size: 0.6rem; background: #e8ecf2; color: #1a3a5c; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+    .save-btn { width: 100%; margin-top: 6px; padding: 8px; background: #0a7a7a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.78rem; cursor: pointer; font-weight: 600; }
+    .save-btn:hover { background: #0a9090; }
 
     /* Model selector pills */
     .model-pills { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
     .model-pill {
       padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; cursor: pointer;
-      border: 1px solid #1e2d40; background: #0d1117; color: #888; transition: all 0.15s;
+      border: 1px solid #c8d4e0; background: #ffffff; color: #6a7a8a; transition: all 0.15s;
     }
-    .model-pill:hover { border-color: #c8d8e8; color: #d0dce8; }
-    .model-pill.selected { background: #111827; border-color: #c8d8e8; color: #eef2f8; }
-    .model-pill .pill-cost { font-size: 0.62rem; color: #3a9090; margin-left: 3px; }
-    .model-pill.selected .pill-cost { color: #c8d8e8; }
+    .model-pill:hover { border-color: #0a7a7a; color: #0a7a7a; }
+    .model-pill.selected { background: #e8ecf2; border-color: #0a7a7a; color: #eef2f8; }
+    .model-pill .pill-cost { font-size: 0.62rem; color: #666; margin-left: 3px; }
+    .model-pill.selected .pill-cost { color: #0a7a7a; }
 
     .main { flex: 1; display: flex; flex-direction: column; }
     .chat-window { flex: 1; overflow-y: auto; padding: 30px 40px; display: flex; flex-direction: column; gap: 18px; }
@@ -89,56 +89,105 @@
     .message { display: flex; gap: 12px; max-width: 780px; }
     .message.user { align-self: flex-end; flex-direction: row-reverse; }
     .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; flex-shrink: 0; }
-    .avatar.bot { background: #c8d8e8; color: #0a0e1a; }
-    .avatar.user { background: #111827; color: #aaa; }
-    .bubble { background: #0d1117; border: 1px solid #1e2d40; border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; line-height: 1.6; color: #ddd; }
-    .message.user .bubble { background: #0a0e1a; border-color: #1e2d40; }
-    .source-tag { display: inline-block; font-size: 0.65rem; background: #111827; color: #c8d8e8; padding: 2px 8px; border-radius: 10px; margin-top: 8px; margin-right: 4px; }
-    .citation-link { color: #a8b8cc; font-size: 0.75rem; text-decoration: none; margin-right: 6px; }
+    .avatar.bot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; flex-shrink: 0; background: #0a7a7a; color: #ffffff; }
+    .avatar.user { background: #e8ecf2; color: #4a5a6a; }
+    .bubble { background: #ffffff; border: 1px solid #c8d4e0; border-radius: 12px; padding: 12px 16px; font-size: 0.88rem; line-height: 1.6; color: #2a3a4a; }
+    .message.user .bubble { background: #f5f7fa; border-color: #1a1a20; }
+    .source-tag { display: inline-block; font-size: 0.65rem; background: #e8ecf2; color: #0a7a7a; padding: 2px 8px; border-radius: 10px; margin-top: 8px; margin-right: 4px; }
+    .citation-link { color: #1a3a5c; font-size: 0.75rem; text-decoration: none; margin-right: 6px; }
     .citation-link:hover { text-decoration: underline; }
 
     .typing { display: flex; gap: 5px; align-items: center; padding: 8px 0; }
-    .typing span { width: 8px; height: 8px; background: #c8d8e8; border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing span { width: 8px; height: 8px; background: #0a7a7a; border-radius: 50%; animation: bounce 1.2s infinite; }
     .typing span:nth-child(2) { animation-delay: 0.2s; }
     .typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
 
-    .input-area { background: #0a0e1a; border-top: 1px solid #1e2d40; padding: 12px 40px 20px; background: #0a0e1a; }
+    .input-area { background: #eef1f6; border-top: 1px solid #c8d4e0; padding: 12px 40px 20px; background: #eef1f6; }
 
     /* Active model indicator above input */
     .active-model-bar {
       display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-      font-size: 0.72rem; color: #3a9090;
+      font-size: 0.72rem; color: #666;
     }
     .active-model-indicator {
-      background: #111827; border-radius: 20px; padding: 3px 12px;
-      color: #c8d8e8; font-size: 0.72rem;
+      background: #e8ecf2; border-radius: 20px; padding: 3px 12px;
+      color: #0a7a7a; font-size: 0.72rem;
     }
 
     .input-row { display: flex; gap: 12px; align-items: flex-end; }
     .input-row textarea {
-      flex: 1; background: #0d1117;
-      border: 2px solid #a8b8cc;
+      flex: 1; background: #ffffff;
+      border: 2px solid #0a7a7a;
       border-radius: 12px;
-      color: #ffffff; font-size: 0.95rem; padding: 14px 18px; resize: none; outline: none;
+      color: #1a2332; font-size: 0.95rem; padding: 14px 18px; resize: none; outline: none;
       font-family: inherit; line-height: 1.5; min-height: 52px; max-height: 120px;
-      box-shadow: 0 0 16px rgba(212,160,23,0.25), 0 0 4px rgba(212,160,23,0.15);
+      box-shadow: 0 0 12px rgba(10,122,122,0.15);
       transition: box-shadow 0.2s, border-color 0.2s;
     }
     .input-row textarea:focus {
-      border-color: #a8b8cc;
-      box-shadow: 0 0 24px rgba(212,160,23,0.5), 0 0 8px rgba(212,160,23,0.3);
+      border-color: #1a3a5c;
+      box-shadow: 0 0 20px rgba(10,122,122,0.3);
     }
-    .input-row textarea::placeholder { color: #888; font-style: italic; }
-    .send-btn { background: #c8d8e8; border: 2px solid #a8b8cc; border-radius: 12px; color: #0a0e1a; padding: 14px 24px; font-size: 1.1rem; cursor: pointer; height: 52px; box-shadow: 0 0 12px rgba(212,160,23,0.4); transition: all 0.2s; font-weight: bold; }
-    .send-btn:hover { background: #a8b8cc; box-shadow: 0 0 20px rgba(212,160,23,0.6); transform: scale(1.04); }
+    .input-row textarea::placeholder { color: #6a7a8a; font-style: italic; }
+    .send-btn { background: #0a7a7a; border: 2px solid #0a7a7a; border-radius: 12px; color: #ffffff; padding: 14px 24px; font-size: 1.1rem; cursor: pointer; height: 52px; transition: all 0.2s; font-weight: bold; }
+    .send-btn:hover { background: #0a9090; transform: scale(1.04); }
     .send-btn:disabled { background: #444; cursor: not-allowed; }
 
-    .routing-hint { font-size: 0.72rem; color: #3a9090; margin-bottom: 8px; }
+    .routing-hint { font-size: 0.72rem; color: #555; margin-bottom: 8px; }
 
     ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #0a0e1a; }
-    ::-webkit-scrollbar-thumb { background: #c8d8e8; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #f5f7fa; }
+    ::-webkit-scrollbar-thumb { background: #0a7a7a; border-radius: 4px; }
+  
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header { padding: 12px 16px; }
+    header h1 { font-size: 1.3rem; }
+    .header-right { gap: 4px; }
+    .backend-bar { padding: 8px 16px; flex-wrap: wrap; }
+    .backend-bar input { min-width: 0; }
+    .container { flex-direction: column; height: auto; min-height: calc(100vh - 160px); }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #c8d4e0; padding: 12px; max-height: 50vh; overflow-y: auto; }
+    .main { flex: 1; min-height: 50vh; }
+    .chat-window { padding: 16px; }
+    .input-area { padding: 10px 16px 16px; }
+    .message { max-width: 100%; }
+    .bubble { font-size: 0.85rem; }
+  }
+
+  /* ── COLLAPSIBLE API CARDS ── */
+  .api-card-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+  }
+  .api-card-body {
+    display: none;
+    margin-top: 10px;
+  }
+  .api-card-body.open {
+    display: block;
+  }
+  .api-card.active .api-card-body {
+    display: block;
+  }
+  .toggle-arrow {
+    font-size: 0.7rem;
+    color: #6a7a8a;
+    transition: transform 0.2s;
+  }
+  .api-card-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+  }
+
   </style>
 </head>
 <body>
@@ -148,8 +197,8 @@
   <div class="header-right" style="gap:8px; align-items:flex-end;">
     <span style="font-size:0.85rem;color:#888;">Universal API Dashboard · v1.5</span>
     <span class="backend-status" id="backendStatus">⚪ Backend not connected</span>
-    <span style="font-size:0.68rem; color:#5bc8c8; white-space:nowrap; margin-right:8px;">🔒 Clear keys before logging out</span>
-    <button onclick="clearAllKeys()" style="background:#0f1520; border:1px solid #c8d8e8; border-radius:6px; color:#a8b8cc; font-size:0.7rem; padding:4px 10px; cursor:pointer;">🗑️ Clear All Keys</button>
+    <span style="font-size:0.68rem; color:#0a7a7a; white-space:nowrap; margin-right:8px;">🔒 Clear keys before logging out</span>
+    <button onclick="clearAllKeys()" style="background:#e8ecf2; border:1px solid #c8d8e8; border-radius:6px; color:#a8b8cc; font-size:0.7rem; padding:4px 10px; cursor:pointer;">🗑️ Clear All Keys</button>
   </div>
 </header>
 
@@ -193,19 +242,19 @@
         </div>
       </div>
       <input type="password" id="key-perplexity" placeholder="pplx-••••••••••••••••" />
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Get Perplexity (Free or Pro)</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Get Perplexity (Free or Pro)</div>
         <a class="get-key" href="https://perplexity.ai" target="_blank" style="color:#4caf7d; font-weight:600;">
           🆓 Start free at perplexity.ai — no credit card needed
         </a>
         <div style="font-size:0.65rem; color:#c8d8e8; margin-top:4px;">⭐ Upgrade to Pro for advanced models &amp; higher limits</div>
       </div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Generate your API Key</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Generate your API Key</div>
         <a class="get-key" href="https://www.perplexity.ai/settings/api" target="_blank">
           🔗 perplexity.ai/settings → API tab
         </a>
-        <div style="font-size:0.65rem; color: #3a9090; margin-top:3px;">Free to create — billed per query separately</div>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Free to create — billed per query separately</div>
       </div>
       <button class="save-btn" onclick="saveKey('perplexity')">Save & Activate</button>
     </div>
@@ -289,10 +338,10 @@
         <span class="badge" id="badge-telegram">Not Set</span>
       </div>
       <div class="desc">📨 Send messages, post to channels, automate bot replies. 100% free.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
         <a class="get-key" href="https://t.me/BotFather" target="_blank">🔗 t.me/BotFather → /newbot</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">Free forever — no credit card needed</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free forever — no credit card needed</div>
       </div>
       <input type="password" id="key-telegram" placeholder="1234567890:ABC-••••••••" />
       <button class="save-btn" onclick="saveKey('telegram')">Save Key</button>
@@ -305,10 +354,10 @@
         <span class="badge" id="badge-discord">Not Set</span>
       </div>
       <div class="desc">🎮 Post to channels, manage webhooks, trigger bot actions. Free.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
         <a class="get-key" href="https://discord.com/developers/applications" target="_blank">🔗 discord.com/developers/applications</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">Create app → Bot → Reset Token. Free.</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Create app → Bot → Reset Token. Free.</div>
       </div>
       <input type="password" id="key-discord" placeholder="Bot token..." />
       <button class="save-btn" onclick="saveKey('discord')">Save Key</button>
@@ -321,10 +370,10 @@
         <span class="badge" id="badge-slack">Not Set</span>
       </div>
       <div class="desc">💼 Send messages to channels, post alerts, automate team updates. Free tier available.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Bot Token</div>
         <a class="get-key" href="https://api.slack.com/apps" target="_blank">🔗 api.slack.com/apps → Create App → OAuth</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">Free for basic messaging — no card needed</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free for basic messaging — no card needed</div>
       </div>
       <input type="password" id="key-slack" placeholder="xoxb-••••••••••" />
       <button class="save-btn" onclick="saveKey('slack')">Save Key</button>
@@ -337,10 +386,10 @@
         <span class="badge" id="badge-whatsapp">Not Set</span>
       </div>
       <div class="desc">📱 Send messages, automate replies, push notifications. 1,000 free msgs/month.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Token</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Token</div>
         <a class="get-key" href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank">🔗 developers.facebook.com → WhatsApp Cloud API</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">1,000 free conversations/month via Meta</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">1,000 free conversations/month via Meta</div>
       </div>
       <input type="password" id="key-whatsapp" placeholder="Access token..." />
       <button class="save-btn" onclick="saveKey('whatsapp')">Save Key</button>
@@ -353,10 +402,10 @@
         <span class="badge" id="badge-messenger">Not Set</span>
       </div>
       <div class="desc">💬 Automate replies, send broadcasts, manage page messaging. Free.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Page Token</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your Page Token</div>
         <a class="get-key" href="https://developers.facebook.com/docs/messenger-platform" target="_blank">🔗 developers.facebook.com → Messenger Platform</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">Free — requires Facebook Page & Meta app</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">Free — requires Facebook Page & Meta app</div>
       </div>
       <input type="password" id="key-messenger" placeholder="Page access token..." />
       <button class="save-btn" onclick="saveKey('messenger')">Save Key</button>
@@ -369,10 +418,10 @@
         <span class="badge" id="badge-twilio">Not Set</span>
       </div>
       <div class="desc">📲 Send SMS to any number worldwide. $15 free trial credit included.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Key</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Get Your API Key</div>
         <a class="get-key" href="https://www.twilio.com/try-twilio" target="_blank">🔗 twilio.com/try-twilio → Free trial ($15 credit)</a>
-        <div style="font-size:0.65rem; color: #5bc8c8; margin-top:3px;">~$0.0079/SMS after trial — no monthly fee</div>
+        <div style="font-size:0.65rem; color:#6a7a8a; margin-top:3px;">~$0.0079/SMS after trial — no monthly fee</div>
       </div>
       <input type="password" id="key-twilio" placeholder="Account SID:Auth Token" />
       <button class="save-btn" onclick="saveKey('twilio')">Save Key</button>
@@ -380,17 +429,17 @@
 
 
       <div class="desc">Build and manage online stores. E-commerce actions, product management, order tracking.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Shopify Affiliate Program</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Shopify Affiliate Program</div>
         <a class="get-key" href="https://www.shopify.com/affiliates" target="_blank" style="color:#ffffff; font-weight:600;" id="aff-shopify">
           ★ Apply to Shopify Affiliates ($150/referral)
         </a>
-        <div style="font-size:0.65rem; color: #3a9090; margin-top:3px;">Earn $150 per full-price plan referral via Impact.com</div>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Earn $150 per full-price plan referral via Impact.com</div>
       </div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Shopify API Key</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Shopify API Key</div>
         <a class="get-key" href="https://shopify.dev/docs/api" target="_blank">🔗 shopify.dev/docs/api</a>
-        <div style="font-size:0.65rem; color: #3a9090; margin-top:3px;">Create a Partner account to access API credentials</div>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Create a Partner account to access API credentials</div>
       </div>
       <input type="text" id="label-custom1" placeholder="Shopify" style="display:none;" value="Shopify" />
       <input type="text" id="endpoint-custom1" placeholder="Endpoint URL" style="display:none;" value="https://shopify.dev/docs/api" />
@@ -403,17 +452,17 @@
         <span class="badge" id="badge-custom2">Not Set</span>
       </div>
       <div class="desc">Create pages, update databases, manage your workspace automatically.</div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Notion Affiliate Program</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 1 — Join Notion Affiliate Program</div>
         <a class="get-key" href="https://www.notion.com/affiliates" target="_blank" style="color:#ffffff; font-weight:600;" id="aff-notion">
           ★ Apply to Notion Affiliates (50% for 12 months)
         </a>
-        <div style="font-size:0.65rem; color: #3a9090; margin-top:3px;">50% recurring commission for 12 months per referral via PartnerStack</div>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">50% recurring commission for 12 months per referral via PartnerStack</div>
       </div>
-      <div style="margin-top:6px; padding:8px; background:#0d1117; border-radius:6px; border:1px solid #1e2d40;">
-        <div style="font-size:0.68rem; color: #5bc8c8; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Notion API Key</div>
+      <div style="margin-top:6px; padding:8px; background:#ffffff; border-radius:6px; border:1px solid #c8d4e0;">
+        <div style="font-size:0.68rem; color:#6a7a8a; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px;">Step 2 — Get your Notion API Key</div>
         <a class="get-key" href="https://www.notion.so/my-integrations" target="_blank">🔗 notion.so/my-integrations</a>
-        <div style="font-size:0.65rem; color: #3a9090; margin-top:3px;">Free to create — requires a Notion account</div>
+        <div style="font-size:0.65rem; color:#555; margin-top:3px;">Free to create — requires a Notion account</div>
       </div>
       <input type="text" id="label-custom2" placeholder="Notion" style="display:none;" value="Notion" />
       <input type="text" id="endpoint-custom2" placeholder="Endpoint URL" style="display:none;" value="https://api.notion.com/v1" />
@@ -665,14 +714,10 @@
   }
 
   
-  // Rate limiter - max 20 requests per minute
   const requestTimestamps = [];
   function isRateLimited() {
     const now = Date.now();
-    // Remove timestamps older than 1 minute
-    while (requestTimestamps.length && requestTimestamps[0] < now - 60000) {
-      requestTimestamps.shift();
-    }
+    while (requestTimestamps.length && requestTimestamps[0] < now - 60000) requestTimestamps.shift();
     if (requestTimestamps.length >= 20) return true;
     requestTimestamps.push(now);
     return false;
@@ -733,7 +778,42 @@
     }
     document.getElementById('sendBtn').disabled = false;
   }
-</script>
+
+  // Collapsible API cards
+  function toggleCard(cardId) {
+    const body = document.querySelector('#' + cardId + ' .api-card-body');
+    const btn = document.querySelector('#' + cardId + ' .api-card-toggle');
+    if (!body) return;
+    body.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+
+  // Wrap card contents in collapsible body on load
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.api-card').forEach(card => {
+      const header = card.querySelector('.api-card-header');
+      if (!header) return;
+      const cardId = card.id;
+      // Wrap header in toggle button
+      const toggle = document.createElement('button');
+      toggle.className = 'api-card-toggle';
+      toggle.setAttribute('onclick', `toggleCard('${cardId}')`);
+      toggle.innerHTML = header.innerHTML + '<span class="toggle-arrow">▼</span>';
+      header.innerHTML = '';
+      header.appendChild(toggle);
+      // Wrap remaining content in collapsible body
+      const body = document.createElement('div');
+      body.className = 'api-card-body';
+      while (card.children.length > 1) {
+        body.appendChild(card.children[1]);
+      }
+      card.appendChild(body);
+      // Open if already active
+      if (card.classList.contains('active')) body.classList.add('open');
+    });
+  });
+
+  </script>
 
   <script>
     // Affiliate link obfuscation: once backend connected, route through /r/ redirect endpoint
@@ -763,4 +843,3 @@
   </script>
 </body>
 </html>
-
